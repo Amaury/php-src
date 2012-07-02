@@ -649,7 +649,7 @@ variable_modifiers:
 
 method_modifiers:
 		/* empty */							{ Z_LVAL($$.u.constant) = ZEND_ACC_PUBLIC; }
-	|	non_empty_member_modifiers			{ $$ = $1;  if (!(Z_LVAL($$.u.constant) & ZEND_ACC_PPP_MASK)) { Z_LVAL($$.u.constant) |= ZEND_ACC_PUBLIC; } }
+	|	non_empty_member_modifiers			{ $$ = $1;  if (Z_LVAL($$.u.constant) & ZEND_ACC_WRITE_PPPC_MASK) { zend_error(E_COMPILE_ERROR, "Write access type modifiers are not allowed in methods"); }  if (!(Z_LVAL($$.u.constant) & ZEND_ACC_PPP_MASK)) { Z_LVAL($$.u.constant) |= ZEND_ACC_PUBLIC; } }
 ;
 
 non_empty_member_modifiers:
@@ -664,6 +664,15 @@ member_modifier:
 	|	T_STATIC				{ Z_LVAL($$.u.constant) = ZEND_ACC_STATIC; }
 	|	T_ABSTRACT				{ Z_LVAL($$.u.constant) = ZEND_ACC_ABSTRACT; }
 	|	T_FINAL					{ Z_LVAL($$.u.constant) = ZEND_ACC_FINAL; }
+	|	T_PUBLIC ':' T_PUBLIC			{ Z_LVAL($$.u.constant) = ZEND_ACC_PUBLIC; }
+	|	T_PROTECTED ':' T_PROTECTED		{ Z_LVAL($$.u.constant) = ZEND_ACC_PROTECTED; }
+	|	T_PRIVATE ':' T_PRIVATE			{ Z_LVAL($$.u.constant) = ZEND_ACC_PRIVATE; }
+	|	T_PUBLIC ':' T_PROTECTED		{ Z_LVAL($$.u.constant) = ZEND_ACC_PUBLIC | ZEND_ACC_WRITE_PROTECTED; }
+	|	T_PUBLIC ':' T_PRIVATE			{ Z_LVAL($$.u.constant) = ZEND_ACC_PUBLIC | ZEND_ACC_WRITE_PRIVATE; }
+	|	T_PROTECTED ':' T_PRIVATE		{ Z_LVAL($$.u.constant) = ZEND_ACC_PROTECTED | ZEND_ACC_WRITE_PRIVATE; }
+	|	T_PUBLIC ':' T_CONST			{ Z_LVAL($$.u.constant) = ZEND_ACC_PUBLIC | ZEND_ACC_WRITE_CONST; }
+	|	T_PROTECTED ':' T_CONST			{ Z_LVAL($$.u.constant) = ZEND_ACC_PROTECTED | ZEND_ACC_WRITE_CONST; }
+	|	T_PRIVATE ':' T_CONST			{ Z_LVAL($$.u.constant) = ZEND_ACC_PRIVATE | ZEND_ACC_WRITE_CONST; }
 ;
 
 class_variable_declaration:

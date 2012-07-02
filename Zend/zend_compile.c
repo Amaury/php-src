@@ -2892,12 +2892,30 @@ static void do_inherit_parent_constructor(zend_class_entry *ce) /* {{{ */
 char *zend_visibility_string(zend_uint fn_flags) /* {{{ */
 {
 	if (fn_flags & ZEND_ACC_PRIVATE) {
+		if (fn_flags & ZEND_ACC_WRITE_CONST) {
+			return "private:const";
+		}
 		return "private";
 	}
 	if (fn_flags & ZEND_ACC_PROTECTED) {
+		if (fn_flags & ZEND_ACC_WRITE_CONST) {
+			return "protected:const";
+		}
+		if (fn_flags & ZEND_ACC_WRITE_PRIVATE) {
+			return "protected:private";
+		}
 		return "protected";
 	}
 	if (fn_flags & ZEND_ACC_PUBLIC) {
+		if (fn_flags & ZEND_ACC_WRITE_CONST) {
+			return "public:const";
+		}
+		if (fn_flags & ZEND_ACC_WRITE_PRIVATE) {
+			return "public:private";
+		}
+		if (fn_flags & ZEND_ACC_WRITE_PROTECTED) {
+			return "public:protected";
+		}
 		return "public";
 	}
 	return "";
