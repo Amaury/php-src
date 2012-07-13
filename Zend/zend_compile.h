@@ -240,6 +240,13 @@ typedef struct _zend_arg_info {
 	zend_bool pass_by_reference;
 } zend_arg_info;
 
+/* enumeration used to define context when getting a property's access type */
+typedef enum _zend_property_access_type {
+	PAT_UNKNOWN = 0,
+	PAT_READ,
+	PAT_WRITE
+} zend_property_access_type;
+
 /* the following structure repeats the layout of zend_arg_info,
  * but its fields have different meaning. It's used as the first element of 
  * arg_info array to define properties of internal functions.
